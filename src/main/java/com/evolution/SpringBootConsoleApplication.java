@@ -35,8 +35,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int acqRange ;
 	@Value("${enrgAgent}")
 	private int enrgAgent ;
-	@Value("${powerMax}")
-	private int powerMax ;
+	@Value("${strengthMax}")
+	private int strengthMax ;
 
 	private SpeedVector speedVector;
 	@Value("${speedMax}")
@@ -75,7 +75,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					acqRange,
 					enrgAgent,
 					speedMax,
-					powerMax)
+					strengthMax)
 			);
 		}
 
@@ -127,15 +127,25 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 			Collections.sort(agents, new SortBySense());
 			for (int j=0; j<agents.size();j++) {
 				if (!agents.get(j).isKilled()) {
-					int power = 0;
-					int mostPowered = 0;
+					float strength = 0;
+					int mostStrengthIndx = 0;
 					for (int l=j; l<agents.size(); l++) {
 						if (!agents.get(l).isKilled()) {
 							if (agents.get(j).isSeen(agents.get(l))) {
-
+								// запомнить самого сильного кандидата
+								if (strength < agents.get(l).getStrength()) {
+									strength = agents.get(l).getStrength();
+									mostStrengthIndx = l;
+								}
 							}
 
 						}
+					}
+					// Убегаем от самого сильного, если есть такой, или рандомно, если никого не найдено
+					if (0 != strength) {
+						agents.get(j).move(agents.get(mostStrengthIndx), area);
+					} else {
+						agents.get(j).move();
 					}
 				}
 			}

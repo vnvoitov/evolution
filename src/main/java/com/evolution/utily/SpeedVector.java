@@ -6,18 +6,16 @@ public class SpeedVector {
 	private int y0;
 	private int y1;
 	private int speed ;
+	private int direction ;
 
 	public SpeedVector(int speed, int x, int y) {
+		this.direction = (int) (Math.random()*359);
 		this.x0 = x;
 		this.y0 = y;
 		this.speed = (int) (Math.random() * (speed-1)) + 1;
 
-		this.x1 = x0 + this.speed * (int) (Math.cos(direction()));
-		this.y1 = y0 + this.speed * (int) (Math.cos(direction()));
-	}
-
-	private int direction() {
-		return (int) (Math.random()*359);
+		this.x1 = x0 + this.speed * (int) (Math.cos(this.direction));
+		this.y1 = y0 + this.speed * (int) (Math.cos(this.direction));
 	}
 
 	public int getX0() {

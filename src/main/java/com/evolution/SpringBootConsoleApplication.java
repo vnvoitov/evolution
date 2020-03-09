@@ -4,8 +4,9 @@ import com.evolution.area.Area;
 import com.evolution.creature.Agent;
 import com.evolution.meal.Meal;
 import com.evolution.service.HelloMessageService;
+import com.evolution.utily.SortByEnergy;
 import com.evolution.utily.SortBySense;
-import com.evolution.utily.SpeedVector;
+import com.evolution.utily.SortBySpeed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
@@ -33,20 +34,23 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int senseRangeMax ;
 	@Value("${acqRange}")
 	private int acqRange ;
-	@Value("${enrgAgent}")
-	private int enrgAgent ;
+	@Value("${Cap}")
+	private int Cap;
 	@Value("${strengthMax}")
 	private int strengthMax ;
 	@Value("${criticalStrength}")
 	private float criticalStrength ;
-
-	private SpeedVector speedVector;
+	@Value("${mutationFreq}")
+	private float mutationFreq ;
 	@Value("${speedMax}")
 	private int speedMax;  // >1
+	@Value("${mutationDepth}")
+	private float mutationDepth ;
 
 	@Value("${iterations}")
 	private int iterations;
 
+	private int agentNum = 0;
 	public static void main(String[] args) throws Exception {
 
 		//disabled banner, don't want to see the spring logo
@@ -63,9 +67,6 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 		Area area = new Area(1000,1000);
 
 		List<Meal> meals = new ArrayList<>();
-		for (int i=0; i<numMeal;i++) {
-			meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal));
-		}
 
 		List<Agent> agents = new ArrayList<>();
 		for (int i=0; i<numAgent; i++) {
@@ -73,10 +74,12 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					area.getHeigh(),
 					senseRangeMax,
 					acqRange,
-					enrgAgent,
+					Cap,
 					speedMax,
 					strengthMax,
-					criticalStrength)
+					criticalStrength,
+					mutationDepth,
+					agentNum++)
 			);
 		}
 
@@ -93,8 +96,11 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //        }
 		k=0;
 		for (int i=0; i<iterations; i++) {
-			System.out.println("Iteration " + i);
-			Collections.sort(agents);
+			// Накидаем еды
+			for (int j=0; j<numMeal;j++) {
+				meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal));
+			}
+			Collections.sort(agents, new SortBySpeed());
 			// Агенты едят пищу
 			for (Agent a: agents) {
 				Iterator m_i = meals.iterator();
@@ -116,9 +122,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					for (int l = j + 1; l < agents.size(); l++) {
 						if (!agents.get(l).isKilled()) {
 							if (agents.get(j).isEatable(agents.get(l))) {
-								System.out.println("Agent killed " + k++ + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY());
+//								System.out.println("Agent " + agents.get(l).getNum() + " killed x=" + agents.get(l).getX() + " y=" + agents.get(l).getY());
 								agents.get(j).addEnergy(agents.get(l).getEnergy());
 								agents.get(l).kill();
+								k++;
 							}
 						}
 					}
@@ -196,11 +203,27 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
-					System.out.println("Agents after " + k + ": x=" + a.getX() + " y=" + a.getY() + " energy=" + a.getEnergy() + " senseRange=" + a.getSense_range() + " strength=" + a.getStrength() + " speed=" + a.getSpeed());
+					//System.out.println("Agents after " + k + ": x=" + a.getX() + " y=" + a.getY() + " energy=" + a.getEnergy() + " senseRange=" + a.getSense_range() + " strength=" + a.getStrength() + " speed=" + a.getSpeed());
+					k ++ ;
 				}
-				k ++ ;
+			}
+			// Мутации
+			Collections.sort(agents, new SortByEnergy());
+			int kk = Math.round(k*mutationFreq);
+			System.out.println("Iteration " + i + ", Overall: " + k + ", Mutation share: " + kk);
+			System.out.println("AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
+			for (int l=0; l<kk; l++) {
+				agents.get(l).evaluate();
+//				System.out.println("Agents sorted " + l + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY() + " energy=" + agents.get(l).getEnergy() + " senseRange=" + agents.get(l).getSense_range() + " strength=" + agents.get(l).getStrength() + " speed=" + agents.get(l).getSpeed());
 			}
 
+			k =0 ;
+			for (Agent a: agents) {
+				if (!a.isKilled()) {
+					System.out.println(a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy() + ";" + a.getSense_range() + ";" + a.getStrength() + ";" + a.getSpeed());
+					k ++ ;
+				}
+			}
 //            k =0 ;
 //            for (Meal m: meals) {
 //                System.out.println("Meal after " + k + ": x=" + m.getX() + " y=" + m.getY() + " energy=" + m.getEnergy());

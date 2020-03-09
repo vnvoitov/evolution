@@ -11,7 +11,7 @@ public class Agent implements Comparable<Agent>{
 	private int sense_range;
 	private int energy;
 
-	private float power;
+	private float strength;
 
 	public Agent(int x, int y, int sense_range, int acq_range, int enrg, int speed, int powerMax) {
 		this.x = (int) (Math.random() * x);
@@ -20,14 +20,14 @@ public class Agent implements Comparable<Agent>{
 		this.energy = enrg;
 		this.acq_range = acq_range ;
 		this.speedVector = new SpeedVector(speed, this.x, this.y);
-		this.power = (float) (Math.random() * (powerMax - 1 )) + 1 ;
+		this.strength = (float) (Math.random() * (powerMax - 1 )) + 1 ;
 	}
 
 	public void kill() {
 		this.sense_range = 0;
 		this.acq_range = 0;
 		this.energy = 0 ;
-		this.power = 0;
+		this.strength = 0;
 		this.x = 0;
 		this.y = 0;
 		this.speedVector.setSpeed(0);
@@ -84,7 +84,12 @@ public class Agent implements Comparable<Agent>{
 	public boolean isEatable(Agent a) {
 		int bb = (int) Math.pow((a.getX()-this.getX()),2) + (int) Math.pow((a.getY()-this.getY()),2);
 		int aa = (int) Math.sqrt(bb);
-		return (acq_range >= aa) && (this.power / a.getPower() > 1.2);
+		return (acq_range >= aa) && (this.strength / a.getStrength() > 1.2);
+	}
+	public boolean isSeen(Agent a) {
+		int bb = (int) Math.pow((a.getX()-this.getX()),2) + (int) Math.pow((a.getY()-this.getY()),2);
+		int aa = (int) Math.sqrt(bb);
+		return (sense_range >= aa) && (this.strength / a.getStrength() > 1.2);
 	}
 	public boolean isKilled() {
 		return this.energy == 0;
@@ -96,11 +101,11 @@ public class Agent implements Comparable<Agent>{
 	public int compareTo(Agent o) {
 		return o.getSpeedVector().getSpeed() - this.getSpeedVector().getSpeed();
 	}
-	public float getPower() {
-		return power;
+	public float getStrength() {
+		return strength;
 	}
-	public void setPower(float power) {
-		this.power = power;
+	public void setStrength(float strength) {
+		this.strength = strength;
 	}
 
 

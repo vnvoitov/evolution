@@ -24,6 +24,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	@Autowired
 	private HelloMessageService helloService;
 
+	@Value("${areaW}")
+	private int areaW;
+	@Value("${areaH}")
+	private int areaH;
 	@Value("${numMeal}")
 	private int numMeal;
 	@Value("${enrgMeal}")
@@ -64,7 +68,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-		Area area = new Area(1000,1000);
+		Area area = new Area(areaW,areaH);
 
 		List<Meal> meals = new ArrayList<>();
 

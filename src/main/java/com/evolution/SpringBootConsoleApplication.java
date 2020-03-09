@@ -60,8 +60,6 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 
-
-		System.out.println("Started");
 		Area area = new Area(1000,1000);
 
 		List<Meal> meals = new ArrayList<>();
@@ -83,10 +81,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 		}
 
 		int k =0 ;
-		for (Agent a: agents) {
-			System.out.println("Agent " + k + ": x=" + a.getX() + " y=" + a.getY() + " vector.speed=" + a.getSpeed());
-			k ++ ;
-		}
+//		for (Agent a: agents) {
+//			System.out.println("Agent generated " + k + ": x=" + a.getX() + " y=" + a.getY() + " energy=" + a.getEnergy());
+//			k ++ ;
+//		}
 
 //        k =0 ;
 //        for (Meal m: meals) {
@@ -95,6 +93,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //        }
 		k=0;
 		for (int i=0; i<iterations; i++) {
+			System.out.println("Iteration " + i);
 			Collections.sort(agents);
 			// Агенты едят пищу
 			for (Agent a: agents) {
@@ -117,7 +116,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					for (int l = j + 1; l < agents.size(); l++) {
 						if (!agents.get(l).isKilled()) {
 							if (agents.get(j).isEatable(agents.get(l))) {
-								System.out.println("Agent killed " + k++ + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY() + " vector.speed=" + agents.get(l).getSpeed());
+								System.out.println("Agent killed " + k++ + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY());
 								agents.get(j).addEnergy(agents.get(l).getEnergy());
 								agents.get(l).kill();
 							}
@@ -196,7 +195,9 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 			}
 			k =0 ;
 			for (Agent a: agents) {
-				System.out.println("Agents after " + k + ": x=" + a.getX() + " y=" + a.getY() + " sense=" + a.getSense_range());
+				if (!a.isKilled()) {
+					System.out.println("Agents after " + k + ": x=" + a.getX() + " y=" + a.getY() + " energy=" + a.getEnergy() + " senseRange=" + a.getSense_range() + " strength=" + a.getStrength() + " speed=" + a.getSpeed());
+				}
 				k ++ ;
 			}
 

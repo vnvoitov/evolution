@@ -22,7 +22,7 @@ public class Agent implements Comparable<Agent>{
 		this.sense_range = (int) (Math.random() * (sense_range-1))+1 ;
 		this.energy = enrg;
 		this.acq_range = acq_range ;
-		//this.speedVector = new SpeedVector(speed, this.x, this.y);
+		this.speed = (int)(Math.random() * (speed - 1 )) + 1 ;
 		this.strength = (float) (Math.random() * (strengthMax - 1 )) + 1 ;
 		this.criticalStrength = criticalStrength ;
 	}

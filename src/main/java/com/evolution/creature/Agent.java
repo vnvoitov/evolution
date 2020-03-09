@@ -165,6 +165,9 @@ public class Agent {
 		if (r > a) {
 			return 2 * a - r;
 		}
+		if (r<0) {
+			return -r;
+		}
 		return r;
 	}
 

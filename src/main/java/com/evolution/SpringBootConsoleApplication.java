@@ -30,20 +30,20 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int enrgMeal;
 	@Value("${numAgent}")
 	private int numAgent ;
-	@Value("${senseRangeMax}")
-	private int senseRangeMax ;
+	@Value("${ExitCostMax}")
+	private int ExitCostMax;
 	@Value("${acqRange}")
 	private int acqRange ;
 	@Value("${Cap}")
 	private int Cap;
-	@Value("${strengthMax}")
-	private int strengthMax ;
-	@Value("${criticalStrength}")
-	private float criticalStrength ;
+	@Value("${MonetizationMax}")
+	private int MonetizationMax;
+	@Value("${criticalMon}")
+	private float criticalMon;
 	@Value("${mutationFreq}")
 	private float mutationFreq ;
-	@Value("${speedMax}")
-	private int speedMax;  // >1
+	@Value("${TimeSunkenMax}")
+	private int TimeSunkenMax;  // >1
 	@Value("${mutationDepth}")
 	private float mutationDepth ;
 
@@ -72,12 +72,12 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 		for (int i=0; i<numAgent; i++) {
 			agents.add(new Agent(area.getWidth(),
 					area.getHeigh(),
-					senseRangeMax,
+					ExitCostMax,
 					acqRange,
 					Cap,
-					speedMax,
-					strengthMax,
-					criticalStrength,
+					TimeSunkenMax,
+					MonetizationMax,
+					criticalMon,
 					mutationDepth,
 					agentNum++)
 			);
@@ -171,7 +171,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 						for (int l=0; l<agents.size(); l++) {
 							if (!agents.get(l).isKilled()) {
 								if (agents.get(j).isSeen(agents.get(l))) {
-									if (agents.get(j).getStrength()/agents.get(l).getStrength() > criticalStrength) {
+									if (agents.get(j).getStrength()/agents.get(l).getStrength() > criticalMon) {
 										if (agents.get(l).getEnergy() > meals.get(nearestM).getEnergy()) {
 											int d = agents.get(l).getEnergy();
 											if (d > nearestA) {
@@ -210,8 +210,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 			// Мутации
 			Collections.sort(agents, new SortByEnergy());
 			int kk = Math.round(k*mutationFreq);
-			System.out.println("Iteration " + i + ", Overall: " + k + ", Mutation share: " + kk);
-			System.out.println("AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
+			//System.out.println("Iteration " + i + ", Overall: " + k + ", Mutation share: " + kk);
+			if (i==0) {
+				System.out.println("Iteration;AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
+			}
 			for (int l=0; l<kk; l++) {
 				agents.get(l).evaluate();
 //				System.out.println("Agents sorted " + l + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY() + " energy=" + agents.get(l).getEnergy() + " senseRange=" + agents.get(l).getSense_range() + " strength=" + agents.get(l).getStrength() + " speed=" + agents.get(l).getSpeed());
@@ -220,7 +222,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
-					System.out.println(a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy() + ";" + a.getSense_range() + ";" + a.getStrength() + ";" + a.getSpeed());
+					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy() + ";" + a.getSense_range() + ";" + a.getStrength() + ";" + a.getSpeed());
 					k ++ ;
 				}
 			}

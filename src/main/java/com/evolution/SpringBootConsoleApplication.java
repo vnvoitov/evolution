@@ -7,6 +7,8 @@ import com.evolution.service.HelloMessageService;
 import com.evolution.utily.SortByEnergy;
 import com.evolution.utily.SortBySense;
 import com.evolution.utily.SortBySpeed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
@@ -55,6 +57,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int iterations;
 
 	private int agentNum = 0;
+
+	final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
 	public static void main(String[] args) throws Exception {
 
 		//disabled banner, don't want to see the spring logo
@@ -69,6 +73,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		Area area = new Area(areaW,areaH);
+		logger.info("Entering application.");
 
 		List<Meal> meals = new ArrayList<>();
 
@@ -100,6 +105,16 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //        }
 		k=0;
 		for (int i=0; i<iterations; i++) {
+//			k =0 ;
+//			for (Agent a: agents) {
+//				if (a.isKilled()) {
+//					k++;
+//				}
+//			}
+//			System.out.println("Agent killed " + k);
+//			if (k>=1995) {
+//				System.out.println("killed " + k);
+//			}
 			// Накидаем еды
 			for (int j=0; j<numMeal;j++) {
 				meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal));
@@ -110,19 +125,21 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 				Iterator m_i = meals.iterator();
 				while (m_i.hasNext()) {
 					Meal m = (Meal) m_i.next();
-					if (a.isEatable(m)) {
+					if (!a.isKilled()) {
+						if (a.isEatable(m)) {
 //                        System.out.println("Agent energy before=" + a.getEnergy());
-						a.addEnergy(m.getEnergy());
+							a.addEnergy(m.getEnergy());
 //                        System.out.println("Meal " + k++ + " Eaten. x=" + m.getX() + " y=" + m.getY());
 //                        System.out.println("Agent energy after=" + a.getEnergy());
-						m_i.remove();
+							m_i.remove();
+						}
 					}
 				}
 			}
 			// Агенты едят друг друга
 			k=0;
 			for (int j=0; j<agents.size();j++) {
-				if (agents.get(j).getStrength() != 0) {
+				if (!agents.get(j).isKilled()) {
 					for (int l = j + 1; l < agents.size(); l++) {
 						if (!agents.get(l).isKilled()) {
 							if (agents.get(j).isEatable(agents.get(l))) {
@@ -142,7 +159,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 				if (!agents.get(j).isKilled()) {
 					float strength = 0;
 					int mostStrengthIndx = 0;
-					for (int l=j; l<agents.size(); l++) {
+					for (int l=j+1; l<agents.size(); l++) {
 						if (!agents.get(l).isKilled()) {
 							if (agents.get(j).isSeen(agents.get(l))) {
 								// запомнить самого сильного кандидата
@@ -172,7 +189,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 								}
 							}
 						}
-						for (int l=0; l<agents.size(); l++) {
+						// поиск самого питательного агента
+						for (int l=j+1; l<agents.size(); l++) {
 							if (!agents.get(l).isKilled()) {
 								if (agents.get(j).isSeen(agents.get(l))) {
 									if (agents.get(j).getStrength()/agents.get(l).getStrength() > criticalMon) {

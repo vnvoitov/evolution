@@ -46,33 +46,14 @@ public class Agent {
 	public int getX() {
 		return x;
 	}
-	public void setX(int x) {
-		this.x = x;
-	}
 	public int getY() {
 		return y;
-	}
-	public void setY(int y) {
-		this.y = y;
-	}
-
-	public int getAcq_range() {
-		return acq_range;
-	}
-	public void setAcq_range(int acq_range) {
-		this.acq_range = acq_range;
 	}
 	public float getSense_range() {
 		return sense_range;
 	}
-	public void setSense_range(int sense_range) {
-		this.sense_range = sense_range;
-	}
 	public int getEnergy() {
 		return energy;
-	}
-	public void setEnergy(int energy) {
-		this.energy = energy;
 	}
 	public boolean isEatable(Meal m) {
 		int bb = (int) Math.pow((m.getX()-this.getX()),2) + (int) Math.pow((m.getY()-this.getY()),2);
@@ -85,11 +66,6 @@ public class Agent {
 		return (sense_range >= aa);
 	}
 	public int distance(Meal m) {
-		int bb = (int) Math.pow((m.getX()-this.getX()),2) + (int) Math.pow((m.getY()-this.getY()),2);
-		int aa = (int) Math.sqrt(bb);
-		return aa;
-	}
-	public int distance(Agent m) {
 		int bb = (int) Math.pow((m.getX()-this.getX()),2) + (int) Math.pow((m.getY()-this.getY()),2);
 		int aa = (int) Math.sqrt(bb);
 		return aa;
@@ -159,7 +135,6 @@ public class Agent {
 			energy = 0;
 		}
 	}
-
 	// Выход r за границу a
 	private int bound (int r, int a) {
 		if (r > a) {
@@ -170,22 +145,11 @@ public class Agent {
 		}
 		return r;
 	}
-
 	public float getStrength() {
 		return strength;
 	}
-	public void setStrength(float strength) {
-		this.strength = strength;
-	}
 	public float getSpeed() {
 		return speed;
-	}
-
-	public float getCriticalStrength() {
-		return criticalStrength;
-	}
-	public void setCriticalStrength(float criticalStrength) {
-		this.criticalStrength = criticalStrength;
 	}
 	// Эволюция. Рандомная из трех характеристик рандомно увеличивается
 	public void evaluate() {

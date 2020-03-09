@@ -10,7 +10,12 @@
             </Pattern>
         </layout>
     </appender>
-
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>evolution.log</file>
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
     <logger name="org.springframework.web" level="error" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
@@ -19,8 +24,8 @@
         <appender-ref ref="STDOUT"/>
     </logger>
 
-    <root level="error">
-        <appender-ref ref="STDOUT"/>
+    <root level="info">
+        <appender-ref ref="FILE"/>
     </root>
 
 </configuration>

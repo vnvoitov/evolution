@@ -37,6 +37,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int enrgAgent ;
 	@Value("${strengthMax}")
 	private int strengthMax ;
+	@Value("${criticalStrength}")
+	private float criticalStrength ;
 
 	private SpeedVector speedVector;
 	@Value("${speedMax}")
@@ -75,13 +77,14 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					acqRange,
 					enrgAgent,
 					speedMax,
-					strengthMax)
+					strengthMax,
+					criticalStrength)
 			);
 		}
 
 		int k =0 ;
 		for (Agent a: agents) {
-			System.out.println("Agent " + k + ": x=" + a.getX() + " y=" + a.getY() + " vector.speed=" + a.getSpeedVector().getSpeed());
+			System.out.println("Agent " + k + ": x=" + a.getX() + " y=" + a.getY() + " vector.speed=" + a.getSpeed());
 			k ++ ;
 		}
 
@@ -114,7 +117,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					for (int l = j + 1; l < agents.size(); l++) {
 						if (!agents.get(l).isKilled()) {
 							if (agents.get(j).isEatable(agents.get(l))) {
-								System.out.println("Agent killed " + k++ + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY() + " vector.speed=" + agents.get(l).getSpeedVector().getSpeed());
+								System.out.println("Agent killed " + k++ + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY() + " vector.speed=" + agents.get(l).getSpeed());
 								agents.get(j).addEnergy(agents.get(l).getEnergy());
 								agents.get(l).kill();
 							}
@@ -141,11 +144,53 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 
 						}
 					}
-					// Убегаем от самого сильного, если есть такой, или рандомно, если никого не найдено
+					// Убегаем от самого сильного, если есть такой, или движемся к еде, если никого не найдено
 					if (0 != strength) {
-						agents.get(j).move(agents.get(mostStrengthIndx), area);
+						agents.get(j).moveFrom(agents.get(mostStrengthIndx), area);
 					} else {
-						agents.get(j).move();
+						// Поиск самой питательной еды
+						int nearestM = 0 ;
+						int nearestA = 0 ;
+						int nearestIndxM = -1;
+						int nearestIndxA = -1;
+						for (int l=0; l<meals.size();l++) {
+							if (agents.get(j).isSeen(meals.get(l))) {
+								int d = agents.get(j).distance(meals.get(l));
+								if (d > nearestM) {
+									nearestM = d ;
+									nearestIndxM = l ;
+								}
+							}
+						}
+						for (int l=0; l<agents.size(); l++) {
+							if (!agents.get(l).isKilled()) {
+								if (agents.get(j).isSeen(agents.get(l))) {
+									if (agents.get(j).getStrength()/agents.get(l).getStrength() > criticalStrength) {
+										if (agents.get(l).getEnergy() > meals.get(nearestM).getEnergy()) {
+											int d = agents.get(l).getEnergy();
+											if (d > nearestA) {
+												nearestA = d ;
+												nearestIndxA = l ;
+											}
+										}
+									}
+								}
+							}
+						}
+						if (nearestIndxM != -1) {
+							if (nearestIndxA != -1) {
+								if (agents.get(nearestIndxA).getEnergy() > meals.get(nearestIndxM).getEnergy()) {
+									agents.get(j).moveTo(agents.get(nearestIndxA));
+								} else {
+									agents.get(j).moveTo(meals.get(nearestIndxM));
+								}
+							} else {
+								agents.get(j).moveTo(meals.get(nearestIndxM));
+							}
+						} else {
+							// Если не найдено ни еды, ни агента, то рандомное движение
+							agents.get(j).move(area);
+						}
 					}
 				}
 			}

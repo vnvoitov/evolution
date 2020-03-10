@@ -121,6 +121,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 			for (int j=0; j<numMeal;j++) {
 				meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal));
 			}
+//			System.out.println("Iteration " + i + ". Meals: " + meals.size());
 			Collections.sort(agents, new SortBySpeed());
 			// Агенты едят пищу
 			for (Agent a: agents) {
@@ -209,6 +210,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 								}
 							}
 						}
+						// Выбор, кого съесть из найденных
 						if (nearestIndxM != -1) {
 							if (nearestIndxA != -1) {
 								if (agents.get(nearestIndxA).getEnergy() > meals.get(nearestIndxM).getEnergy()) {
@@ -247,7 +249,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
-					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy() + ";" + a.getSense_range() + ";" + a.getStrength() + ";" + a.getSpeed());
+					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy_s() + ";" + a.getSense_range_s() + ";" + a.getStrength_s() + ";" + a.getSpeed_s());
 //					k ++ ;
 				}
 			}

@@ -138,10 +138,10 @@ public class Agent {
 	// Выход r за границу a
 	private int bound (int r, int a) {
 		if (r > a) {
-			return 2 * a - r;
+			return a-1;
 		}
 		if (r<0) {
-			return -r;
+			return 1;
 		}
 		return r;
 	}
@@ -150,6 +150,18 @@ public class Agent {
 	}
 	public float getSpeed() {
 		return speed;
+	}
+	public String getStrength_s() {
+		return String.valueOf(strength).replace('.',',');
+	}
+	public String getSense_range_s() {
+		return String.valueOf(sense_range).replace('.',',');
+	}
+	public String getEnergy_s() {
+		return String.valueOf(energy).replace('.',',');
+	}
+	public String getSpeed_s() {
+		return String.valueOf(speed).replace('.',',');
 	}
 	// Эволюция. Рандомная из трех характеристик рандомно увеличивается
 	public void evaluate() {

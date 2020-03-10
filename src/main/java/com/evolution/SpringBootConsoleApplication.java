@@ -57,6 +57,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int iterations;
 
 	private int agentNum = 0;
+	private int agentKilled=0;
 
 	final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
 	public static void main(String[] args) throws Exception {
@@ -103,8 +104,9 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //            System.out.println("Meal before " + k + ": x=" + m.getX() + " y=" + m.getY() + " energy=" + m.getEnergy());
 //            k ++ ;
 //        }
+		System.out.println("Iteration;AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
 		k=0;
-		for (int i=0; i<iterations; i++) {
+		for (int i=0; (i<iterations)&&(agentNum>agentKilled); i++) {
 //			k =0 ;
 //			for (Agent a: agents) {
 //				if (a.isKilled()) {
@@ -146,6 +148,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //								System.out.println("Agent " + agents.get(l).getNum() + " killed x=" + agents.get(l).getX() + " y=" + agents.get(l).getY());
 								agents.get(j).addEnergy(agents.get(l).getEnergy());
 								agents.get(l).kill();
+								agentKilled++;
+//								System.out.println("Killed: "+agentKilled + " N:" + agents.get(l).getNum());
 								k++;
 							}
 						}
@@ -222,30 +226,29 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					}
 				}
 			}
-			k =0 ;
-			for (Agent a: agents) {
-				if (!a.isKilled()) {
-					//System.out.println("Agents after " + k + ": x=" + a.getX() + " y=" + a.getY() + " energy=" + a.getEnergy() + " senseRange=" + a.getSense_range() + " strength=" + a.getStrength() + " speed=" + a.getSpeed());
-					k ++ ;
-				}
-			}
+//			k =0 ;
+//			for (Agent a: agents) {
+//				if (!a.isKilled()) {
+//					System.out.println("Agents after " + k + ": x=" + a.getX() + " y=" + a.getY() + " energy=" + a.getEnergy() + " senseRange=" + a.getSense_range() + " strength=" + a.getStrength() + " speed=" + a.getSpeed());
+//					k ++ ;
+//				}
+//			}
 			// Мутации
+			//System.out.println("O:" + (agentKilled));
 			Collections.sort(agents, new SortByEnergy());
-			int kk = Math.round(k*mutationFreq);
+			int kk = Math.round((agentNum-agentKilled)*mutationFreq);
 			//System.out.println("Iteration " + i + ", Overall: " + k + ", Mutation share: " + kk);
-			if (i==0) {
-				System.out.println("Iteration;AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
-			}
+
 			for (int l=0; l<kk; l++) {
 				agents.get(l).evaluate();
 //				System.out.println("Agents sorted " + l + ": x=" + agents.get(l).getX() + " y=" + agents.get(l).getY() + " energy=" + agents.get(l).getEnergy() + " senseRange=" + agents.get(l).getSense_range() + " strength=" + agents.get(l).getStrength() + " speed=" + agents.get(l).getSpeed());
 			}
 
-			k =0 ;
+//			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
 					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy() + ";" + a.getSense_range() + ";" + a.getStrength() + ";" + a.getSpeed());
-					k ++ ;
+//					k ++ ;
 				}
 			}
 //            k =0 ;

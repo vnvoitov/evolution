@@ -59,7 +59,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int agentNum = 0;
 	private int agentKilled=0;
 
-	final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
+	//final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
 	public static void main(String[] args) throws Exception {
 
 		//disabled banner, don't want to see the spring logo
@@ -74,7 +74,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 
 		Area area = new Area(areaW,areaH);
-		logger.info("Entering application.");
+		//logger.info("Entering application.");
 
 		List<Meal> meals = new ArrayList<>();
 

@@ -2,13 +2,13 @@ package com.evolution;
 
 import com.evolution.area.Area;
 import com.evolution.creature.Agent;
+import com.evolution.entities.Ext;
+import com.evolution.genom.Genome;
 import com.evolution.meal.Meal;
 import com.evolution.service.HelloMessageService;
 import com.evolution.utily.SortByEnergy;
 import com.evolution.utily.SortBySense;
 import com.evolution.utily.SortBySpeed;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.Banner;
@@ -59,6 +59,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int agentNum = 0;
 	private int agentKilled=0;
 
+
 	//final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
 	public static void main(String[] args) throws Exception {
 
@@ -70,14 +71,13 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 		//SpringApplication.run(SpringBootConsoleApplication.class, args);
 	}
 
+
 	@Override
 	public void run(String... args) throws Exception {
-
 		Area area = new Area(areaW,areaH);
 		//logger.info("Entering application.");
-
 		List<Meal> meals = new ArrayList<>();
-
+		Ext ext = new Ext();
 		List<Agent> agents = new ArrayList<>();
 		for (int i=0; i<numAgent; i++) {
 			agents.add(new Agent(area.getWidth(),
@@ -89,7 +89,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					MonetizationMax,
 					criticalMon,
 					mutationDepth,
-					agentNum++)
+					agentNum++,
+					ext)
 			);
 		}
 
@@ -107,6 +108,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 		System.out.println("Iteration;AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
 		k=0;
 		for (int i=0; (i<iterations)&&(agentNum>agentKilled); i++) {
+			ext.extChange();
 //			k =0 ;
 //			for (Agent a: agents) {
 //				if (a.isKilled()) {
@@ -119,7 +121,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //			}
 			// Накидаем еды
 			for (int j=0; j<numMeal;j++) {
-				meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal));
+				meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal, ext));
 			}
 //			System.out.println("Iteration " + i + ". Meals: " + meals.size());
 			Collections.sort(agents, new SortBySpeed());
@@ -150,7 +152,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 								agents.get(j).addEnergy(agents.get(l).getEnergy());
 								agents.get(l).kill();
 								agentKilled++;
-//								System.out.println("Killed: "+agentKilled + " N:" + agents.get(l).getNum());
+								System.out.println("Killed: "+agentKilled + " N:" + agents.get(l).getNum());
 								k++;
 							}
 						}
@@ -182,7 +184,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					} else {
 						// Поиск самой питательной еды
 						int nearestM = 0 ;
-						int nearestA = 0 ;
+						float nearestA = 0 ;
 						int nearestIndxM = -1;
 						int nearestIndxA = -1;
 						for (int l=0; l<meals.size();l++) {
@@ -199,8 +201,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 							if (!agents.get(l).isKilled()) {
 								if (agents.get(j).isSeen(agents.get(l))) {
 									if (agents.get(j).getStrength()/agents.get(l).getStrength() > criticalMon) {
-										if (agents.get(l).getEnergy() > meals.get(nearestM).getEnergy()) {
-											int d = agents.get(l).getEnergy();
+										if (agents.get(l).valueEnergy() > meals.get(nearestM).valueEnergy()) {
+											float d = agents.get(l).valueEnergy();
 											if (d > nearestA) {
 												nearestA = d ;
 												nearestIndxA = l ;
@@ -213,7 +215,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 						// Выбор, кого съесть из найденных
 						if (nearestIndxM != -1) {
 							if (nearestIndxA != -1) {
-								if (agents.get(nearestIndxA).getEnergy() > meals.get(nearestIndxM).getEnergy()) {
+								if (agents.get(nearestIndxA).valueEnergy() > meals.get(nearestIndxM).valueEnergy()) {
 									agents.get(j).moveTo(agents.get(nearestIndxA));
 								} else {
 									agents.get(j).moveTo(meals.get(nearestIndxM));
@@ -249,7 +251,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
-					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.getEnergy_s() + ";" + a.getSense_range_s() + ";" + a.getStrength_s() + ";" + a.getSpeed_s());
+					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.valueEnergy_s()+ ";" + a.getEnergy().size() + ";" + a.getSense_range_s() + ";" + a.getStrength_s() + ";" + a.getSpeed_s());
 //					k ++ ;
 				}
 			}

@@ -1,8 +1,12 @@
 package com.evolution.creature;
 
 import com.evolution.area.Area;
+import com.evolution.entities.Ext;
+import com.evolution.genom.Genome;
 import com.evolution.meal.Meal;
-//import com.evolution.utily.SpeedVector;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Agent {
 	private int x;
@@ -12,20 +16,25 @@ public class Agent {
 	private float speed;
 	private int acq_range;
 	private float sense_range;
-	private int energy;
+	private List<Genome> energy;
 	private float strength;
 	private float criticalStrength;
 	private int energyDec ;
 	private float mutationDepth;
+	private boolean isKilled;
+	private Ext ext ;
 
 
 	private int num;
 
-	public Agent(int x, int y, int sense_range, int acq_range, int enrg, int speed, int strengthMax, float criticalStrength, float mutationDepth, int num) {
+	public Agent(int x, int y, int sense_range, int acq_range, int enrg, int speed, int strengthMax, float criticalStrength, float mutationDepth, int num, Ext ext) {
 		this.x = (int) Math.round(Math.random() * x);
 		this.y = (int) Math.round((Math.random() * y));
 		this.sense_range = (int) Math.round(Math.random() * (sense_range-1)+1) ;
-		this.energy = enrg;
+		energy = new ArrayList<>(enrg);
+		for (int i=0;i<enrg;i++) {
+			this.energy.add(new Genome());
+		}
 		this.acq_range = acq_range ;
 		this.speed = Math.round(Math.random() * (speed-1))+1 ;
 		this.strength = (float) Math.round(Math.random() * (strengthMax-1)+1);
@@ -33,11 +42,13 @@ public class Agent {
 		this.energyDec = 1;
 		this.mutationDepth = mutationDepth ;
 		this.num = num ;
+		this.isKilled = false;
+		this.ext = ext ;
 	}
 	public void kill() {
 		this.sense_range = 0;
 		this.acq_range = 0;
-		this.energy = 0 ;
+		this.isKilled = true ;
 		this.strength = 0;
 		this.x = 0;
 		this.y = 0;
@@ -52,13 +63,26 @@ public class Agent {
 	public float getSense_range() {
 		return sense_range;
 	}
-	public int getEnergy() {
+	public float valueEnergy() {
+		List<Ext.ExtT> e = ext.extOrder();
+		float rc = 0 ;
+		for (int i=0; i<energy.size(); i++) {
+			rc += e.get(0).value * energy.get(i).getGen(e.get(0).key) +
+					e.get(1).value * energy.get(i).getGen(e.get(1).key) -
+					Math.abs(e.get(2).value * energy.get(i).getGen(e.get(2).key));
+		}
+		return rc;
+	}
+	public List<Genome> getEnergy() {
 		return energy;
 	}
 	public boolean isEatable(Meal m) {
-		int bb = (int) Math.pow((m.getX()-this.getX()),2) + (int) Math.pow((m.getY()-this.getY()),2);
-		int aa = (int) Math.sqrt(bb);
-		return acq_range >= aa;
+		if (!m.isEaten()) {
+			int bb = (int) Math.pow((m.getX() - this.x), 2) + (int) Math.pow((m.getY() - this.y), 2);
+			int aa = (int) Math.sqrt(bb);
+			return acq_range >= aa;
+		}
+		return false;
 	}
 	public boolean isSeen (Meal m) {
 		int bb = (int) Math.pow((m.getX()-this.getX()),2) + (int) Math.pow((m.getY()-this.getY()),2);
@@ -81,10 +105,12 @@ public class Agent {
 		return (sense_range >= aa) && (a.getStrength() / this.strength > this.criticalStrength);
 	}
 	public boolean isKilled() {
-		return this.energy == 0;
+		return this.isKilled;
 	}
-	public void addEnergy (int energy) {
-		this.energy += energy;
+	public void addEnergy (List<Genome> energy) {
+		for (Genome g: energy) {
+			this.energy.add(g);
+		}
 	}
 	// Убегаем от агента
 	public void moveFrom(Agent a, Area area) {
@@ -94,7 +120,6 @@ public class Agent {
 		this.y = (int) (this.y + this.speed * (this.y - a.getY()) / aa);
 		this.x = bound(this.x, area.getWidth());
 		this.y = bound(this.y, area.getHeigh());
-		energyDec();
 	}
 	// Догоняем агента
 	public void moveTo(Agent a) {
@@ -106,7 +131,6 @@ public class Agent {
 			this.x = a.getX();
 			this.y = a.getY();
 		}
-		energyDec();
 	}
 	// Идем к еде
 	public void moveTo(Meal a) {
@@ -118,7 +142,6 @@ public class Agent {
 			this.x = a.getX();
 			this.y = a.getY();
 		}
-		energyDec();
 	}
 	// Движемся рандомно
 	public void move(Area area) {
@@ -126,13 +149,11 @@ public class Agent {
 		this.y = (int) Math.round(speed * Math.sin(Math.toRadians(Math.random() * 359)) + this.y);
 		this.x = bound(this.x, area.getWidth());
 		this.y = bound(this.y, area.getHeigh());
-		energyDec();
 	}
 	// Уменьшить энергию. Если энергия == 0, то агент убит
 	private void energyDec() {
-		energy -= energyDec;
-		if (energy < 0) {
-			energy = 0;
+		if (this.valueEnergy() <= 1) {
+			kill();
 		}
 	}
 	// Выход r за границу a
@@ -157,8 +178,8 @@ public class Agent {
 	public String getSense_range_s() {
 		return String.valueOf(sense_range).replace('.',',');
 	}
-	public String getEnergy_s() {
-		return String.valueOf(energy).replace('.',',');
+	public String valueEnergy_s() {
+		return String.valueOf(valueEnergy()).replace('.',',');
 	}
 	public String getSpeed_s() {
 		return String.valueOf(speed).replace('.',',');

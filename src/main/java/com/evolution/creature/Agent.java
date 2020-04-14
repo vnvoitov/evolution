@@ -24,6 +24,9 @@ public class Agent {
 	private boolean isKilled;
 	private Ext ext ;
 
+	public int getEnergyDec() {
+		return energyDec;
+	}
 
 	private int num;
 
@@ -74,6 +77,10 @@ public class Agent {
 		return rc;
 	}
 	public List<Genome> getEnergy() {
+		kill();
+		return energy;
+	}
+	public List<Genome> checkEnergy() {
 		return energy;
 	}
 	public boolean isEatable(Meal m) {

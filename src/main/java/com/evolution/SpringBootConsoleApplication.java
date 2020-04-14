@@ -61,7 +61,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 
 
 	//final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args)  {
 
 		//disabled banner, don't want to see the spring logo
 		SpringApplication app = new SpringApplication(SpringBootConsoleApplication.class);
@@ -73,7 +73,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 
 
 	@Override
-	public void run(String... args) throws Exception {
+	public void run(String... args)  {
 		Area area = new Area(areaW,areaH);
 		//logger.info("Entering application.");
 		List<Meal> meals = new ArrayList<>();
@@ -237,6 +237,15 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //					k ++ ;
 //				}
 //			}
+			// Убить агентов
+			for (Agent a: agents) {
+				if (!a.isKilled()) {
+					if ((a.valueEnergy() - 1 - a.getEnergyDec()) <= 0) {
+						a.kill();
+                        System.out.println("Agent killed by low energy" + a.getNum());
+					}
+				}
+			}
 			// Мутации
 			//System.out.println("O:" + (agentKilled));
 			Collections.sort(agents, new SortByEnergy());
@@ -251,7 +260,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
-					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.valueEnergy_s()+ ";" + a.getEnergy().size() + ";" + a.getSense_range_s() + ";" + a.getStrength_s() + ";" + a.getSpeed_s());
+					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.valueEnergy_s()+ ";" + a.checkEnergy().size() + ";" + a.getSense_range_s() + ";" + a.getStrength_s() + ";" + a.getSpeed_s());
 //					k ++ ;
 				}
 			}

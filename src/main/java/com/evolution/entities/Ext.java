@@ -22,60 +22,44 @@ public class Ext {
 		extChange();
 	}
 	public void extChange () {
-		extA = (float) (Math.random()*2-1);
-		extB = (float) (Math.random()*2-1);
-		extC = (float) (Math.random()*2-1);
+		extA = (float) (Math.random());
+		extB = (float) (Math.random());
+		extC = (float) (Math.random());
 	}
 
 	public List<ExtT> extOrder() {
 		List<ExtT> rc = new ArrayList<>(3);
 		if (extA > extB) {
 			if (extA > extC) {
-//				rc.add(new HashMap<String, Float>(){{put("A",extA);}});
 				rc.add(new ExtT("A", extA));
 				if (extB > extC) {
-//					rc.add(new HashMap<String, Float>(){{put("B",extB);}});
-//					rc.add(new HashMap<String, Float>(){{put("C",extC);}});
 					rc.add(new ExtT("B", extB));
 					rc.add(new ExtT("C", extC));
 				} else {
-//					rc.add(new HashMap<String, Float>(){{put("C",extC);}});
-//					rc.add(new HashMap<String, Float>(){{put("B",extB);}});
 					rc.add(new ExtT("C", extB));
 					rc.add(new ExtT("B", extC));
 				}
 			} else {
-//				rc.add(new HashMap<String, Float>(){{put("C",extC);}});
-//				rc.add(new HashMap<String, Float>(){{put("A",extA);}});
-//				rc.add(new HashMap<String, Float>(){{put("B",extB);}});
 				rc.add(new ExtT("C", extC));
 				rc.add(new ExtT("A", extA));
 				rc.add(new ExtT("B", extB));
 			}
 		} else {
 			if (extA < extC) {
-//				rc.add(new HashMap<String, Float>(){{put("A",extA);}});
-				rc.add(new ExtT("A", extA));
 				if (extB > extC) {
-//					rc.add(new HashMap<String, Float>(){{put("B",extB);}});
-//					rc.add(new HashMap<String, Float>(){{put("C",extC);}});
 					rc.add(new ExtT("B", extB));
 					rc.add(new ExtT("C", extC));
 				} else {
-//					rc.add(new HashMap<String, Float>(){{put("C",extC);}});
-//					rc.add(new HashMap<String, Float>(){{put("B",extB);}});
 					rc.add(new ExtT("C", extC));
 					rc.add(new ExtT("B", extB));
 				}
+				rc.add(new ExtT("A", extA));
 			} else {
-//				rc.add(new HashMap<String, Float>(){{put("B",extB);}});
-//				rc.add(new HashMap<String, Float>(){{put("A",extA);}});
-//				rc.add(new HashMap<String, Float>(){{put("C",extC);}});
 				rc.add(new ExtT("B", extB));
 				rc.add(new ExtT("A", extA));
 				rc.add(new ExtT("C", extC));
 			}
 		}
-		return rc;
+	return rc;
 	}
 }

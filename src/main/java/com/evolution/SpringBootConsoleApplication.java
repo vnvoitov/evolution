@@ -105,7 +105,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //            System.out.println("Meal before " + k + ": x=" + m.getX() + " y=" + m.getY() + " energy=" + m.getEnergy());
 //            k ++ ;
 //        }
-		System.out.println("Iteration;AgentNum;X;Y;Cap;ExitCost;Monetization;TimeSunken");
+		System.out.println("Iteration;AgentNum;X;Y;Cap;Size;ExitCost;Monetization;TimeSunken");
 		k=0;
 		for (int i=0; (i<iterations)&&(agentNum>agentKilled); i++) {
 			ext.extChange();
@@ -260,6 +260,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //			k =0 ;
 			for (Agent a: agents) {
 				if (!a.isKilled()) {
+//					System.out.println("Iteration;AgentNum;         X;                  Y;              Cap;                    Size;                           ExitCost;                       Monetization;           TimeSunken");
 					System.out.println(i + ";" + a.getNum() + ";" + a.getX() + ";" + a.getY() + ";" + a.valueEnergy_s()+ ";" + a.checkEnergy().size() + ";" + a.getSense_range_s() + ";" + a.getStrength_s() + ";" + a.getSpeed_s());
 //					k ++ ;
 				}

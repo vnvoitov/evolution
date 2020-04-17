@@ -7,7 +7,7 @@
     <groupId>com.voitov</groupId>
     <artifactId>evolution</artifactId>
     <packaging>jar</packaging>
-    <version>1.0</version>
+    <version>1.01</version>
 
     <parent>
         <groupId>org.springframework.boot</groupId>

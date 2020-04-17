@@ -4,8 +4,11 @@ import com.evolution.area.Area;
 import com.evolution.entities.Ext;
 import com.evolution.genom.Genome;
 import com.evolution.meal.Meal;
+import com.evolution.utily.SortByEnergy;
+import com.evolution.utily.SortByGenomeEnrg;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Agent {
@@ -70,9 +73,10 @@ public class Agent {
 		List<Ext.ExtT> e = ext.extOrder();
 		float rc = 0 ;
 		for (int i=0; i<energy.size(); i++) {
-			rc += e.get(0).value * energy.get(i).getGen(e.get(0).key) +
-					e.get(1).value * energy.get(i).getGen(e.get(1).key) -
-					Math.abs(e.get(2).value * energy.get(i).getGen(e.get(2).key));
+//			rc += e.get(0).value * energy.get(i).getGen(e.get(0).key) +
+//					e.get(1).value * energy.get(i).getGen(e.get(1).key) -
+//					Math.abs(e.get(2).value * energy.get(i).getGen(e.get(2).key));
+			rc += calcEnrg(i,e);
 		}
 		return rc;
 	}
@@ -210,5 +214,36 @@ public class Agent {
 	public int getNum() {
 		return num;
 	}
+	// Мутация генов
+	public void evaluateGenom(float criticalA) {
+		List<Ext.ExtT> e = ext.extOrder();
+		float rc = 0 ;
+		// Посчитать энергию
+		for (int i=0; i<energy.size(); i++) {
+			energy.get(i).setEnrg(calcEnrg(i,e));
+		}
+		// отсортировать геномы по энергии
+		Collections.sort(energy, new SortByGenomeEnrg());
+		// взять первые хх% и посчитать среднее по генам и присвоить это значение каждому гену остальным 90% геномов
+		int kk = Math.round(energy.size()*criticalA);
+		float sumA = 0 ;
+		float sumB = 0 ;
+		float sumC = 0 ;
+		for (int l=0; l<kk; l++) {
+			sumA += energy.get(l).getGenA();
+			sumB += energy.get(l).getGenB();
+			sumC += energy.get(l).getGenC();
+		}
+		for (int l=kk; l<energy.size(); l++) {
+			energy.get(l).setGenA(sumA/kk);
+			energy.get(l).setGenB(sumB/kk);
+			energy.get(l).setGenC(sumC/kk);
+		}
+	}
 
+	private float calcEnrg (int i, List<Ext.ExtT> e) {
+		return 	e.get(0).value * energy.get(i).getGen(e.get(0).key) +
+				e.get(1).value * energy.get(i).getGen(e.get(1).key) -
+				Math.abs(e.get(2).value * energy.get(i).getGen(e.get(2).key));
+	}
 }

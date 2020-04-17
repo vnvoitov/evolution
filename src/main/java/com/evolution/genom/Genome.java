@@ -4,10 +4,12 @@ public class Genome {
 	private float genA;
 	private float genB;
 	private float genC;
+	private float Enrg;
 	{
 		genA = (float) Math.random();
 		genB = (float) Math.random();
 		genC = (float) Math.random();
+		Enrg = 0 ;
 	}
 	public float getGenA() {
 		return genA;
@@ -49,4 +51,11 @@ public class Genome {
 		return rc ;
 	}
 
+	public float getEnrg() {
+		return Enrg;
+	}
+
+	public void setEnrg(float enrg) {
+		Enrg = enrg;
+	}
 }

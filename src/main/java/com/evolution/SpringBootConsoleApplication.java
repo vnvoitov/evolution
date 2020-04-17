@@ -52,9 +52,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int TimeSunkenMax;  // >1
 	@Value("${mutationDepth}")
 	private float mutationDepth ;
-
 	@Value("${iterations}")
 	private int iterations;
+	@Value("${criticalA}")
+	private float criticalA;
 
 	private int agentNum = 0;
 	private int agentKilled=0;
@@ -246,7 +247,14 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					}
 				}
 			}
-			// Мутации
+			// Мутации генов
+			for (Agent a: agents) {
+				if (!a.isKilled()) {
+					a.evaluateGenom(criticalA);
+				}
+			}
+
+			// Мутации агентов
 			//System.out.println("O:" + (agentKilled));
 			Collections.sort(agents, new SortByEnergy());
 			int kk = Math.round((agentNum-agentKilled)*mutationFreq);

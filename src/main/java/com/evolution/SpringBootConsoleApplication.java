@@ -56,7 +56,8 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int iterations;
 	@Value("${criticalA}")
 	private float criticalA;
-
+	@Value("${auto_feed:true}")
+	private boolean auto_feed;
 	private int agentNum = 0;
 	private int agentKilled=0;
 
@@ -121,8 +122,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //				System.out.println("killed " + k);
 //			}
 			// Накидаем еды
-			for (int j=0; j<numMeal;j++) {
-				meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal, ext));
+			if (auto_feed || (i==0)) { // только для первой итерации или для каждой.
+				for (int j = 0; j < numMeal; j++) {
+					meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal, ext));
+				}
 			}
 //			System.out.println("Iteration " + i + ". Meals: " + meals.size());
 			Collections.sort(agents, new SortBySpeed());

@@ -13,11 +13,15 @@ public class Meal{
 	private boolean eaten ;
 	private Ext ext ;
 
-	public Meal (int x, int y, int enrg, Ext ext) {
+	public Meal (int x, int y, int enrg, Ext ext, int energyMealMode) {
 		this.x = (int) (Math.random() * x);
 		this.y = (int) (Math.random() * y);
-		energy = new ArrayList<>(enrg);
-		for (int i=0;i<enrg;i++) {
+		int t_enrg = enrg;
+		if (energyMealMode == 2) {
+			t_enrg = (int) Math.round(Math.random() * (enrg-1)+1) ;
+		}
+		energy = new ArrayList<>(t_enrg);
+		for (int i=0;i<t_enrg;i++) {
 			this.energy.add(new Genome());
 		}
 		this.eaten = false;

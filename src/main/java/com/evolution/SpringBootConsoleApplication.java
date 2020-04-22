@@ -56,11 +56,14 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 	private int iterations;
 	@Value("${criticalA}")
 	private float criticalA;
-	@Value("${auto_feed:true}")
-	private boolean auto_feed;
 	private int agentNum = 0;
 	private int agentKilled=0;
-
+	@Value("${mealMode}")
+	private int mealMode;
+	@Value("${energyMealMode}")
+	private int energyMealMode;
+	@Value("${mutationDepthMode}")
+	private int mutationDepthMode;
 
 	//final static Logger logger = LoggerFactory.getLogger(SpringBootConsoleApplication.class);
 	public static void main(String[] args)  {
@@ -91,6 +94,7 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 					MonetizationMax,
 					criticalMon,
 					mutationDepth,
+					mutationDepthMode,
 					agentNum++,
 					ext)
 			);
@@ -122,9 +126,9 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //				System.out.println("killed " + k);
 //			}
 			// Накидаем еды
-			if (auto_feed || (i==0)) { // только для первой итерации или для каждой.
+			if (((mealMode==3) && (i==0)) || (mealMode!=3)) { // только для первой итерации или для каждой.
 				for (int j = 0; j < numMeal; j++) {
-					meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal, ext));
+					meals.add(new Meal(area.getWidth(), area.getWidth(), enrgMeal, ext, energyMealMode));
 				}
 			}
 //			System.out.println("Iteration " + i + ". Meals: " + meals.size());
@@ -281,6 +285,10 @@ public class SpringBootConsoleApplication implements CommandLineRunner {
 //                System.out.println("Meal after " + k + ": x=" + m.getX() + " y=" + m.getY() + " energy=" + m.getEnergy());
 //                k ++ ;
 //            }
+			// удалить несъеденную еду
+			if (mealMode == 2) {
+				meals.clear();
+			}
 		}
 
 		exit(0);

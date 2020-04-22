@@ -26,6 +26,7 @@ public class Agent {
 	private float mutationDepth;
 	private boolean isKilled;
 	private Ext ext ;
+	private float mutationDepthMode;
 
 	public int getEnergyDec() {
 		return energyDec;
@@ -33,7 +34,7 @@ public class Agent {
 
 	private int num;
 
-	public Agent(int x, int y, int sense_range, int acq_range, int enrg, int speed, int strengthMax, float criticalStrength, float mutationDepth, int num, Ext ext) {
+	public Agent(int x, int y, int sense_range, int acq_range, int enrg, int speed, int strengthMax, float criticalStrength, float mutationDepth, int mutationDepthMode, int num, Ext ext) {
 		this.x = (int) Math.round(Math.random() * x);
 		this.y = (int) Math.round((Math.random() * y));
 		this.sense_range = (int) Math.round(Math.random() * (sense_range-1)+1) ;
@@ -47,6 +48,7 @@ public class Agent {
 		this.criticalStrength = criticalStrength ;
 		this.energyDec = 1;
 		this.mutationDepth = mutationDepth ;
+		this.mutationDepthMode = mutationDepthMode;
 		this.num = num ;
 		this.isKilled = false;
 		this.ext = ext ;
@@ -198,16 +200,20 @@ public class Agent {
 	// Эволюция. Рандомная из трех характеристик рандомно увеличивается
 	public void evaluate() {
 		int property = (int) Math.round(Math.random() * 2);
+		float t_mutationDepth = mutationDepth;
+		if (mutationDepthMode ==2) {
+			t_mutationDepth = (float) ((float) (Math.random()*(mutationDepth - 0.001)) + 0.001);
+		}
 		energyDec ++ ;
 		switch (property) {
 			case 0:
-				this.strength *= 1+mutationDepth ;
+				this.strength *= 1+t_mutationDepth ;
 				break;
 			case 1:
-				this.speed *= 1+mutationDepth;
+				this.speed *= 1+t_mutationDepth;
 				break;
 			case 2:
-				this.sense_range *= 1+mutationDepth ;
+				this.sense_range *= 1+t_mutationDepth ;
 				break;
 		}
 	}
